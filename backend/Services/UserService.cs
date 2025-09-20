@@ -19,7 +19,7 @@ public class UserService : IUserService
 
     public async Task<UserDTO> CreateUser(User user)
     {
-        var userInDB = _context.Users.FirstOrDefault(user => user.email == user.email);
+        var userInDB = _context.Users.FirstOrDefault(u => u.email == user.email);
         if (userInDB == null)
         {
             var passwordHash = _authService.CalculatePasswordHash(user, user.password);

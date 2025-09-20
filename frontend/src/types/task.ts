@@ -5,7 +5,7 @@ export enum TaskStatus {
 }
 
 export interface Task {
-  id: string;
+  id?: string;
   title: string;
   status: TaskStatus;
   assigneeId?: string;
@@ -13,4 +13,5 @@ export interface Task {
   description: string;
   createdAt: Date;
   updatedAt: Date;
+  priority?: number;
 }

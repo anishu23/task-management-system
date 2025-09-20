@@ -11,6 +11,7 @@ interface AuthProviderProps {
 
 export const AuthenticationProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const [jwt, setJwt] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -18,16 +19,19 @@ export const AuthenticationProvider = ({ children }: AuthProviderProps) => {
   useEffect(() => {
     const savedToken = localStorage.getItem('jwt');
     const savedUser = localStorage.getItem('user');
+    const savedUserId = localStorage.getItem('userId');
 
-    if (savedToken && savedUser) {
+    if (savedToken && savedUserId) {
       setJwt(savedToken);
       setUser(savedUser);
+      setUserId(savedUserId);
     }
 
     setLoading(false);
   }, []);
 
   const login = async (email: string, password: string) => {
+    setLoading(true);
     const res = await fetch('https://localhost:7117/api/Auth/login', {
       method: 'POST',
       headers: {
@@ -39,12 +43,13 @@ export const AuthenticationProvider = ({ children }: AuthProviderProps) => {
 
     if (res.status != 200) throw res.status;
 
-    const generatedToken = data.token;
-    const username = data.username;
-    setJwt(generatedToken);
-    setUser(username);
-    localStorage.setItem('jwt', generatedToken);
-    localStorage.setItem('user', username);
+    setJwt(data.token);
+    setUser(data.username);
+    setUserId(data.userId);
+    localStorage.setItem('jwt', data.token);
+    localStorage.setItem('user', data.username);
+    localStorage.setItem('userId', data.userId);
+    setLoading(false);
   };
 
   const register = async (user: User, password: string) => {
@@ -63,11 +68,13 @@ export const AuthenticationProvider = ({ children }: AuthProviderProps) => {
   const logout = () => {
     setJwt(null);
     setUser(null);
+    setUserId(null);
     localStorage.removeItem('jwt');
     localStorage.removeItem('user');
+    localStorage.removeItem('userId');
   };
 
-  const value: AuthContextType = { user, jwt, login, logout, register };
+  const value: AuthContextType = { user, jwt, login, logout, register, userId };
 
   if (loading) {
     return <div>Loading...</div>;

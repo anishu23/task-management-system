@@ -58,7 +58,7 @@ namespace backend.Controllers
             {
                 var token = _tokenService.GenerateJwtToken(userCredential.email);
                 var user = await _userService.GetUser(userCredential.email);
-                return Ok(new { token = token, username = user.username });
+                return Ok(new { token = token, username = user.username, userId = user.id });
             }
             return Unauthorized();
         }
